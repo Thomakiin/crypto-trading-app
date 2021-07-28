@@ -1,4 +1,4 @@
-import './App.css';
+//import './App.css';
 import Home from './Home';
 import Coins from './Coins';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
