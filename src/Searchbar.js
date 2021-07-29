@@ -22,11 +22,7 @@ const Searchbar = () => {
     function getMatchingResults(text, maxResults) {
         let successfulResults = 0;
         let coinsListCopy = [...coinsList];
-        console.log(coinsList.length);
-        let results = coinsListCopy.filter( (coin, i) => {
-            //return coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase();
-            
-            
+        let results = coinsListCopy.filter((coin, i) => {
             if (successfulResults >= maxResults) { return false; }
             else if (coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase() || coin.symbol.toLowerCase().substr(0, text.length) === text.toLowerCase()) {
                 successfulResults += 1;
@@ -35,6 +31,7 @@ const Searchbar = () => {
             }
 
         });
+        // Note: should push EXACT match to the top here
         console.log("matchingResults: ", results);
         setTopResults(results);
     }
@@ -53,6 +50,15 @@ const Searchbar = () => {
             .catch(err => console.error(err));
     }
 
+    function handleOnChange(text) {
+        console.log("on change: " + text)
+        getMatchingResults(text, 25);
+    }
+
+    function handleOnSubmit(text) {
+        search(text);
+    }
+
     // On component mount
     useEffect(() => {
         fetchCoinsList();
@@ -62,14 +68,9 @@ const Searchbar = () => {
     return (
         <div>
             <Form
-                onSubmit={(text) => { search(text) }}
-                onChange={(text) => {
-                    console.log("on change: " + text)
-                    getMatchingResults(text, 25);
-                }}
-            >
-
-            </Form>
+                onSubmit={(text) => { handleOnSubmit(text) }}
+                onChange={(text) => { handleOnChange(text); }}
+            /> 
             {topResults.map((result) => (
                 <div key={result.id}>
                     <h2>
