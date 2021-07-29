@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from 'react';
-import Form from '../Form';
+import Form from './Form';
 
 let coinsList = [];
 
@@ -72,7 +72,7 @@ const Searchbar = () => {
                 onChange={(text) => { handleOnChange(text); }}
             /> 
             {topResults.map((result) => (
-                <div key={result.id}>
+                <div key={result.id} onClick={() => console.log("id: " + result.id)}>
                     <h2>
                         {result.name}
                     </h2>

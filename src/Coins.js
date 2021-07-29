@@ -1,5 +1,5 @@
 import styles from './Coins.module.css'
-import Searchbar from './Searchbar'
+import Searchbar from './components/Searchbar'
 
 const Coins = () => {
     return (  
