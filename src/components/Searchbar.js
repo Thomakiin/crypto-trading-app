@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from 'react';
-import Form from './Form';
+import Form from '../Form';
 
 let coinsList = [];
 
