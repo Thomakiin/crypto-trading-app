@@ -1,10 +1,11 @@
-//import { useState } from "react";
+import { useState } from "react";
 import { useEffect } from 'react';
 import Form from './Form';
 
+let coinsList = [];
+
 const Searchbar = () => {
-    let coinsList = [];
-    let topResults = [];
+    let [topResults, setTopResults] = useState([]);
 
     async function fetchCoinsList() {
         let res = await fetch("http://localhost:5000/coingecko", {
@@ -20,15 +21,22 @@ const Searchbar = () => {
 
     function getMatchingResults(text, maxResults) {
         let successfulResults = 0;
-        let arr = coinsList.filter((coin, i) => {
+        let coinsListCopy = [...coinsList];
+        console.log(coinsList.length);
+        let results = coinsListCopy.filter( (coin, i) => {
+            //return coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase();
+            
+            
             if (successfulResults >= maxResults) { return false; }
             else if (coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase() || coin.symbol.toLowerCase().substr(0, text.length) === text.toLowerCase()) {
                 successfulResults += 1;
+                console.log("success");
                 return true;
             }
-        });
 
-        console.log("topResults: ", arr);
+        });
+        console.log("matchingResults: ", results);
+        setTopResults(results);
     }
 
     function search(text) {
@@ -62,6 +70,14 @@ const Searchbar = () => {
             >
 
             </Form>
+            {topResults.map((result) => (
+                <div key={result.id}>
+                    <h2>
+                        {result.name}
+                    </h2>
+                </div>
+            ))}
+
         </div>
     );
 }
