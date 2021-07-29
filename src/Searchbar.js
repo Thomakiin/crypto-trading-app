@@ -1,31 +1,68 @@
 //import { useState } from "react";
+import { useEffect } from 'react';
 import Form from './Form';
 
 const Searchbar = () => {
+    let coinsList = [];
+    let topResults = [];
 
-    function search(text) {
-        fetch("https://coingecko.p.rapidapi.com/coins/" + text + "?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false", {
+    async function fetchCoinsList() {
+        let res = await fetch("http://localhost:5000/coingecko", {
             "method": "GET",
             "headers": {
-                "x-rapidapi-key": "", /* Make sure to deal with API key in backend */
-                "x-rapidapi-host": "coingecko.p.rapidapi.com"
+                "endpoint": "/coins/list"
             }
         })
-            .then(response => {
-                console.log(response);
-                return response.json();
-            })
+        let json = await res.json();
+        coinsList = json;
+        console.log("coins list fetched");
+    }
+
+    function getMatchingResults(text, maxResults) {
+        let successfulResults = 0;
+        let arr = coinsList.filter((coin, i) => {
+            if (successfulResults >= maxResults) { return false; }
+            else if (coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase() || coin.symbol.toLowerCase().substr(0, text.length) === text.toLowerCase()) {
+                successfulResults += 1;
+                return true;
+            }
+        });
+
+        console.log("topResults: ", arr);
+    }
+
+    function search(text) {
+        fetch("http://localhost:5000/coingecko", {
+            "method": "GET",
+            "headers": {
+                "endpoint": "/coins/" + text + "?localization=false&tickers=true&market_data=true&community_data=false&developer_data=false&sparkline=false"
+            }
+        })
+            .then(res => res.json())
             .then(json => {
                 console.log(json);
             })
-            .catch(err => {
-                console.error(err);
-            });
+            .catch(err => console.error(err));
     }
 
+    // On component mount
+    useEffect(() => {
+        fetchCoinsList();
+    }, []);
+
+
     return (
-        <Form onSubmit={(text) => { search(text) }}>
-        </Form>
+        <div>
+            <Form
+                onSubmit={(text) => { search(text) }}
+                onChange={(text) => {
+                    console.log("on change: " + text)
+                    getMatchingResults(text, 25);
+                }}
+            >
+
+            </Form>
+        </div>
     );
 }
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // A Form component that's designed to be extended to reduce code overhead
-const Searchbar = (props) => {
+const Form = (props) => {
     let [text, setText] = useState("");
 
     function handleOnChange(e) {
@@ -17,10 +17,14 @@ const Searchbar = (props) => {
         <form onSubmit={handleSubmit}>
             <label>
                 Form:
-                <input type="text" onChange={handleOnChange} />
+                <input type="text"
+                    onChange={(e) => {
+                        handleOnChange(e);
+                        props.onChange(text);
+                    }} />
             </label>
         </form>
     );
 }
 
-export default Searchbar;
+export default Form;
