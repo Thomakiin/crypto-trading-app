@@ -50,7 +50,7 @@ const Searchbar = () => {
 
     function handleOnChange(text) {
         console.log("on change: " + text)
-        getMatchingResults(text, 25);
+        getMatchingResults(text, 5);
     }
 
     function handleOnSubmit(text) {
@@ -65,17 +65,24 @@ const Searchbar = () => {
 
     return (
         <div>
-            <input type="text"
-                onChange={(e) => { handleOnChange(e.target.value); }}
-                onSubmit={(e) => { handleOnSubmit(e.target.value); }}
-            />
-            {topResults.map((result) => (
-                <div key={result.id} onClick={() => console.log("id: " + result.id)}>
-                    <h2>
-                        {result.name}
-                    </h2>
+
+            <div className="searchbar-holder">
+                <input
+                    className="search-input"
+                    type="text"
+                    onChange={(e) => { handleOnChange(e.target.value); }}
+                    onSubmit={(e) => { handleOnSubmit(e.target.value); }}
+                />
+                <div className="search-results-holder">
+                    {topResults.map((result) => (
+                        <div className="search-result" key={result.id} onClick={() => console.log("id: " + result.id)}>
+                            <p>
+                                {result.name}
+                            </p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
 
         </div>
     );
