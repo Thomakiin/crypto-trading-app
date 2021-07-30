@@ -48,13 +48,34 @@ const Searchbar = () => {
             .catch(err => console.error(err));
     }
 
-    function handleOnChange(text) {
-        console.log("on change: " + text)
-        getMatchingResults(text, 5);
+    function handleOnChange(e) {
+        console.log("on change: " + e.target.value)
+        getMatchingResults(e.target.value, 5);
     }
 
-    function handleOnSubmit(text) {
-        search(text);
+    function handleOnSubmit(e) {
+        search(e.target.value);
+    }
+
+    function handleOnFocus(e) {
+        console.log("focus");
+        let searchInput = document.getElementById("search-input");
+        getMatchingResults(searchInput.value, 5);
+        //getMatchingResults();
+    }
+    function handleOnBlur(e) {
+        console.log("blur");
+        // Remove search results. Done after a 1 milisecond to allow click events to register if a search result is clicked
+        setTimeout(() => { setTopResults([]) }, 1);
+
+        /*
+        let searchResults = document.getElementsByClassName("search-result");
+        for(let i=0; i< searchResults.length; i++){
+            console.log(searchResults[i]);
+            searchResults[i].style.visiblity = "hidden";
+        }
+        */
+
     }
 
     // On component mount
@@ -69,13 +90,16 @@ const Searchbar = () => {
             <div className="searchbar-holder">
                 <input
                     className="search-input"
+                    id="search-input"
                     type="text"
-                    onChange={(e) => { handleOnChange(e.target.value); }}
-                    onSubmit={(e) => { handleOnSubmit(e.target.value); }}
+                    onChange={(e) => { handleOnChange(e); }}
+                    onSubmit={(e) => { handleOnSubmit(e); }}
+                    onFocus={(e) => handleOnFocus(e)}
+                    onBlur={(e) => handleOnBlur(e)}
                 />
                 <div className="search-results-holder">
                     {topResults.map((result) => (
-                        <div className="search-result" key={result.id} onClick={() => console.log("id: " + result.id)}>
+                        <div className="search-result" key={result.id} onClick={() => { console.log("id: " + result.id); search(result.id) }}>
                             <p>
                                 {result.name}
                             </p>
