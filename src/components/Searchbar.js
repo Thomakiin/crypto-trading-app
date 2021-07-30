@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useEffect } from 'react';
-import Form from './Form';
 
 let coinsList = [];
 
@@ -26,12 +25,11 @@ const Searchbar = () => {
             if (successfulResults >= maxResults) { return false; }
             else if (coin.name.toLowerCase().substr(0, text.length) === text.toLowerCase() || coin.symbol.toLowerCase().substr(0, text.length) === text.toLowerCase()) {
                 successfulResults += 1;
-                console.log("success");
                 return true;
             }
 
         });
-        // Note: should push EXACT match to the top here
+        // Note: should make sure the EXACT match is placed at the top
         console.log("matchingResults: ", results);
         setTopResults(results);
     }
@@ -67,10 +65,10 @@ const Searchbar = () => {
 
     return (
         <div>
-            <Form
-                onSubmit={(text) => { handleOnSubmit(text) }}
-                onChange={(text) => { handleOnChange(text); }}
-            /> 
+            <input type="text"
+                onChange={(e) => { handleOnChange(e.target.value); }}
+                onSubmit={(e) => { handleOnSubmit(e.target.value); }}
+            />
             {topResults.map((result) => (
                 <div key={result.id} onClick={() => console.log("id: " + result.id)}>
                     <h2>
