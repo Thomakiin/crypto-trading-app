@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import Searchbar from './components/Searchbar'
+//import { useState } from 'react';
+//import Searchbar from './components/Searchbar'
 
 
 const Coins = () => {

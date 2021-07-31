@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 
 const CoinDisplay = (props) => {
     let [focusedCoin, setFocusedCoin] = useState(null);
-    let [coinsToCompare, setCoinsToCompare] = useState([]);
+    //let [coinsToCompare, setCoinsToCompare] = useState([]);
     const location = useLocation();
 
     console.log("CoinDisplay props.focusedCoin = ", location.state.selectedCoin);
@@ -12,6 +12,7 @@ const CoinDisplay = (props) => {
 
     useEffect(() => {
         setFocusedCoin(location.state.selectedCoin);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

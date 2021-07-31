@@ -27,6 +27,9 @@ const Searchbar = (props) => {
                 successfulResults += 1;
                 return true;
             }
+            else{
+                return false;
+            }
 
         });
         // Note: should make sure the EXACT match is placed at the top
