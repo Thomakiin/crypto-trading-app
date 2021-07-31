@@ -1,4 +1,3 @@
-//import styles from './Coins.module.css'
 import { useState } from 'react';
 import Searchbar from './components/Searchbar'
 
