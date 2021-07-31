@@ -112,9 +112,6 @@ const Searchbar = (props) => {
                     ))}
                 </div>
             </div>
-            <p>
-                test text lolem ipsum lol
-            </p>
 
         </div>
     );
