@@ -82,6 +82,9 @@ const Searchbar = (props) => {
         */
 
     }
+    function handleSearchResultClicked(result) {
+        tryFetchCoinByID(result.id)
+    }
 
     // On component mount
     useEffect(() => {
@@ -104,7 +107,7 @@ const Searchbar = (props) => {
                 />
                 <div className="search-results-holder">
                     {topResults.map((result) => (
-                        <div className="search-result" key={result.id} onClick={() => { console.log("id: " + result.id); tryFetchCoinByID(result.id) }}>
+                        <div className="search-result" key={result.id} onClick={() => { handleSearchResultClicked(result) }}>
                             <p>
                                 {result.name}
                             </p>
