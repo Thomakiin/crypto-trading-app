@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 let coinsList = [];
 
-const Searchbar = () => {
+const Searchbar = (props) => {
     let [topResults, setTopResults] = useState([]);
 
     async function fetchCoinsList() {
@@ -34,18 +34,23 @@ const Searchbar = () => {
         setTopResults(results);
     }
 
-    function search(text) {
+    function tryFetchCoinByID(text) {
         fetch("http://localhost:5000/coingecko", {
             "method": "GET",
             "headers": {
-                "endpoint": "/coins/" + text + "?localization=false&tickers=true&market_data=true&community_data=false&developer_data=false&sparkline=false"
+                "endpoint": "/coins/" + text + "?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false"
             }
         })
             .then(res => res.json())
             .then(json => {
                 console.log(json);
+                props.onSelected(json);
+                return json;
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err)
+                return false;
+            });
     }
 
     function handleOnChange(e) {
@@ -54,7 +59,7 @@ const Searchbar = () => {
     }
 
     function handleOnSubmit(e) {
-        search(e.target.value);
+        tryFetchCoinByID(e.target.value);
     }
 
     function handleOnFocus(e) {
@@ -65,8 +70,8 @@ const Searchbar = () => {
     }
     function handleOnBlur(e) {
         console.log("blur");
-        // Remove search results. Done after a 1 milisecond to allow click events to register if a search result is clicked
-        setTimeout(() => { setTopResults([]) }, 1);
+        // Remove search results. Done after a 100 miliseconds to allow click events to register if a search result is clicked
+        setTimeout(() => { setTopResults([]) }, 100);
 
         /*
         let searchResults = document.getElementsByClassName("search-result");
@@ -99,7 +104,7 @@ const Searchbar = () => {
                 />
                 <div className="search-results-holder">
                     {topResults.map((result) => (
-                        <div className="search-result" key={result.id} onClick={() => { console.log("id: " + result.id); search(result.id) }}>
+                        <div className="search-result" key={result.id} onClick={() => { console.log("id: " + result.id); tryFetchCoinByID(result.id) }}>
                             <p>
                                 {result.name}
                             </p>
@@ -107,6 +112,9 @@ const Searchbar = () => {
                     ))}
                 </div>
             </div>
+            <p>
+                test text lolem ipsum lol
+            </p>
 
         </div>
     );
