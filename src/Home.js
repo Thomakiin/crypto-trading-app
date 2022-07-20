@@ -8,9 +8,9 @@ function Home() {
   const history = useHistory();
 
   function test(coinData) {
-    console.log("Home: inCoinData: ", coinData);
     //setSelectedCoin(coinData);
     //console.log("Home: selectedCoin: ", selectedCoin);
+    // redirect to coin compare page and pass in selected coin
     if (coinData !== null) {
       history.push("/coincompare", { selectedCoin: coinData });
     }

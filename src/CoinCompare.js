@@ -14,27 +14,58 @@ const CoinDisplay = (props) => {
 
     const location = useLocation();
 
-    async function fetchChartData(id) {
+    async function fetchChartData(coin) {
         let res = await fetch("http://localhost:5000/coingecko", {
             "method": "GET",
             "headers": {
-                "endpoint": "/coins/" + id + "/market_chart?vs_currency=usd&days=7"
+                "endpoint": "/coins/" + coin.id + "/market_chart?vs_currency=usd&days=7&interval=daily"
             }
         })
         let json = await res.json();
+        return json;
+    }
 
-        let prices = json.prices.map((el) => {
+    function formatChartData(chartData, coin) {
+        let prices = chartData.prices.map((el) => {
             return el[1];
         });
-        let timestamps = json.prices.map((el) => {
+        let maxPrice = Math.max.apply(null, prices);
+        let percentages = chartData.prices.map((el) => {
+            let price = el[1]; // extract price from timestamp / price pair
+            return ((price - prices[0]) / maxPrice) * 100; // show percent difference 
+        });
+
+        let timestamps = chartData.prices.map((el) => {
             return el[0];
         });
 
-        let outData = { "prices": prices, "timestamps": timestamps };
-        //console.log("fetchChartData outData: ", outData);
-        setChartData(outData);
+        let outData = {
+            "timestamps": timestamps,
+            "label": coin.name,
+            "data": percentages,
+            "fill": false,
+            "borderColor": 'rgb(75, 192, 192)',
+            "tension": 0
+        };
         return (outData);
     }
+
+
+    async function fetchAllCharts() {
+        //let labels = [];
+        let datasets = [];
+        for (let i = 0; i < coins.length; i++) {
+            let coin = coins[i];
+            let fetchedData = await fetchChartData(coin);
+            //for(let j=0; j<chartData.prices; j++){}
+            chartData = formatChartData(fetchedData, coin);
+            datasets.push(chartData);
+        }
+        setChartData(datasets);
+        console.log("fetchAllCharts newChartData", datasets);
+        return datasets;
+    }
+
 
     async function redisplayChart() {
         //console.log("redisplay chart, chartData: ", chartData);
@@ -48,17 +79,10 @@ const CoinDisplay = (props) => {
         if (typeof LineChart !== "undefined") LineChart.destroy();
         LineChart = new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: chartData.timestamps,
-                datasets: coins.map(coin => {
-                    return ({
-                        "label": location.state.selectedCoin.name,
-                        "data": chartData.prices,
-                        "fill": false,
-                        "borderColor": 'rgb(75, 192, 192)',
-                        "tension": 0.1
-                    });
-                })
+            data: { // NOTE: LABELS AND DATASETS CAN BUNDLED INSIDE CHART DATA!!
+                //labels: chartData[0].timestamps,
+                labels: [1, 2, 3, 4, 5, 6, 7], // since I hard coded daily interval and 7 days in fetch function
+                datasets: chartData
             },
             options: {
                 scales: {
@@ -66,6 +90,14 @@ const CoinDisplay = (props) => {
                         grid: {
                             display: false,
                         },
+                    },
+                    y: {
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                return '%' + value;
+                            }
+                        }
                     }
                 },
                 animation: {
@@ -84,20 +116,22 @@ const CoinDisplay = (props) => {
         //console.log("CoinDisplay props.focusedCoin = ", location.state.selectedCoin);
         //setFocusedCoin(location.state.selectedCoin);
         setCoins([location.state.selectedCoin]);
-
-        fetchChartData(location.state.selectedCoin.id);
+        //fetchChartData(location.state.selectedCoin);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    
-    useEffect(() => {
-        console.log("coins useEffect");
-        // USE AXOIS TO FETCH(AND SET) CHART DATA FOR EVERY COIN, which will activate chartData's useEffect() to redisplay the chart
-    }, [coins]);
 
     useEffect(() => {
-        console.log("chart data useEffect");
+        //console.log("coins useEffect");
+        // USE AXOIS TO FETCH(AND SET) CHART DATA FOR EVERY COIN, which will activate chartData's useEffect() to redisplay the chart
+        fetchAllCharts();
+        //redisplayChart();
+    }, [coins]);
+
+
+    useEffect(() => {
+        console.log("chart data useEffect", chartData);
         redisplayChart();
     }, [chartData]);
 

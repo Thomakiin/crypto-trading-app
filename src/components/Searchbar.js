@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useEffect } from 'react';
+import axios from 'axios';
 
 let coinsList = [];
 
@@ -7,15 +8,19 @@ const Searchbar = (props) => {
     let [topResults, setTopResults] = useState([]);
 
     async function fetchCoinsList() {
-        let res = await fetch("http://localhost:5000/coingecko", {
+        const res = await axios.get("http://localhost:5000/coingecko", {
             "method": "GET",
             "headers": {
                 "endpoint": "/coins/list"
             }
         })
-        let json = await res.json();
-        coinsList = json;
-        console.log("coins list fetched");
+        if (res.data.message) { // if error message
+            console.log(res.data.message);
+            return [];
+        }
+        //let json = await res.json();
+        coinsList = res.data;
+        //console.log("coins list fetched", json);
     }
 
     function getMatchingResults(text, maxResults) {
@@ -27,13 +32,13 @@ const Searchbar = (props) => {
                 successfulResults += 1;
                 return true;
             }
-            else{
+            else {
                 return false;
             }
 
         });
         // Note: should make sure the EXACT match is placed at the top
-        console.log("matchingResults: ", results);
+        //console.log("matchingResults: ", results);
         setTopResults(results);
     }
 
@@ -57,7 +62,7 @@ const Searchbar = (props) => {
     }
 
     function handleOnChange(e) {
-        console.log("on change: " + e.target.value)
+        //console.log("on change: " + e.target.value)
         getMatchingResults(e.target.value, 5);
     }
 
@@ -66,13 +71,13 @@ const Searchbar = (props) => {
     }
 
     function handleOnFocus(e) {
-        console.log("focus");
+        //console.log("focus");
         let searchInput = document.getElementById("search-input");
         getMatchingResults(searchInput.value, 5);
         //getMatchingResults();
     }
     function handleOnBlur(e) {
-        console.log("blur");
+        //console.log("blur");
         // Remove search results. Done after a 100 miliseconds to allow click events to register if a search result is clicked
         setTimeout(() => { setTopResults([]) }, 100);
 
